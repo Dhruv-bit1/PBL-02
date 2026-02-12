@@ -1,13 +1,13 @@
 # CCTV Violence Detection with Explainable AI (XAI)
 
-## 📌 Project Overview
+## Project Overview
 This project aims to build an automated surveillance assistance system that detects violent activities in CCTV footage deployed in crowded public places. Since continuous human monitoring of surveillance cameras is impractical, the system uses computer vision and deep learning to automatically identify suspicious or violent behavior and raise alerts.  
 
 To improve trust and accountability, the system integrates Explainable AI (XAI) techniques that visually and temporally explain why a particular video was classified as violent.
 
 ---
 
-## 🎯 Objectives
+## Objectives
 - Detect violent activities in real-world CCTV footage
 - Reduce dependency on 24/7 human monitoring
 - Provide visual explanations for model decisions using XAI
@@ -15,7 +15,7 @@ To improve trust and accountability, the system integrates Explainable AI (XAI) 
 
 ---
 
-## 📂 Dataset
+## Dataset
 **RWF-2000 (Real-World Fighting Dataset)**  
 - 2000 CCTV-style video clips  
 - Two classes: `Fight` and `NonFight`  
@@ -26,7 +26,7 @@ Dataset is downloaded using `kagglehub`.
 
 ---
 
-## 🧠 System Architecture
+## System Architecture
 1. Video input from CCTV footage  
 2. Frame extraction and preprocessing  
 3. Deep learning-based violence detection model  
@@ -35,7 +35,7 @@ Dataset is downloaded using `kagglehub`.
 
 ---
 
-## 🛠️ Technologies Used
+## Technologies Used
 - **Python**
 - **OpenCV** – video processing and frame extraction  
 - **PyTorch** – deep learning model implementation  
@@ -46,7 +46,7 @@ Dataset is downloaded using `kagglehub`.
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 CCTV_Violence_Detection_XAI/
 ├── data/
 │ └── raw/
@@ -68,7 +68,7 @@ CCTV_Violence_Detection_XAI/
 
 ---
 
-## 🔍 Explainable AI (XAI)
+## Explainable AI (XAI)
 The project uses explainable AI techniques to justify model predictions:
 - Grad-CAM heatmaps to highlight important regions
 - Temporal analysis to identify critical frames
@@ -78,7 +78,7 @@ These explanations help understand what patterns influenced the model’s decisi
 
 ---
 
-## 📊 Evaluation Metrics
+## Evaluation Metrics
 - Accuracy
 - Precision
 - Recall
@@ -87,7 +87,7 @@ These explanations help understand what patterns influenced the model’s decisi
 
 ---
 
-## 🚀 Future Scope
+## Future Scope
 - Detection of other suspicious activities (theft, vandalism, loitering)
 - Multi-class classification of abnormal events
 - Real-time deployment with live CCTV feeds
