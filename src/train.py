@@ -6,15 +6,20 @@ from sklearn.metrics import accuracy_score
 from tqdm import tqdm
 import os
 
-from dataset import VideoDataset
-from model import FightDetector
+from src.dataset import VideoDataset
+from src.model import FightDetector
 
 
-# Device
+# ==============================
+# Device Setup
+# ==============================
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Using device:", device)
 
-# Transform
+
+# ==============================
+# Transforms
+# ==============================
 transform = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize(
@@ -23,27 +28,64 @@ transform = transforms.Compose([
     )
 ])
 
-# Paths (use mini_test for now)
-train_path = "data/mini_test"
-val_path = "data/mini_test"
+
+# ==============================
+# Dataset Paths (Mini Demo)
+# ==============================
+train_path = "data/mini-test"
+val_path = "data/mini-test"
 
 train_dataset = VideoDataset(train_path, transform=transform)
 val_dataset = VideoDataset(val_path, transform=transform)
 
-train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=1, shuffle=False)
+print("Classes:", train_dataset.classes)
+print("Number of videos:", len(train_dataset))
 
-# Model
+
+# ==============================
+# DataLoaders (Windows Safe)
+# ==============================
+train_loader = DataLoader(
+    train_dataset,
+    batch_size=1,
+    shuffle=True,
+    num_workers=0
+)
+
+val_loader = DataLoader(
+    val_dataset,
+    batch_size=1,
+    shuffle=False,
+    num_workers=0
+)
+
+
+# ==============================
+# Model Setup (Transfer Learning)
+# ==============================
 model = FightDetector(num_classes=2).to(device)
 
-criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+# Freeze backbone (train only last layer)
+# Freeze all layers
+for param in model.backbone.parameters():
+    param.requires_grad = False
 
+# Unfreeze final layer ONLY
+for param in model.backbone.fc.parameters():
+    param.requires_grad = True
+
+optimizer = torch.optim.Adam(model.backbone.fc.parameters(), lr=0.0001)
+criterion = nn.CrossEntropyLoss()
+
+
+# ==============================
+# Training Loop
+# ==============================
 epochs = 2
 
 for epoch in range(epochs):
     model.train()
-    train_loss = 0
+    running_loss = 0
 
     for videos, labels in tqdm(train_loader):
         videos = videos.to(device)
@@ -55,11 +97,13 @@ for epoch in range(epochs):
         loss.backward()
         optimizer.step()
 
-        train_loss += loss.item()
+        running_loss += loss.item()
 
-    print(f"Epoch {epoch+1} Loss: {train_loss:.4f}")
+    print(f"\nEpoch [{epoch+1}/{epochs}] Loss: {running_loss:.4f}")
 
+    # ==============================
     # Validation
+    # ==============================
     model.eval()
     all_preds = []
     all_labels = []
@@ -78,8 +122,11 @@ for epoch in range(epochs):
     acc = accuracy_score(all_labels, all_preds)
     print(f"Validation Accuracy: {acc:.4f}")
 
-# Save model
+
+# ==============================
+# Save Model
+# ==============================
 os.makedirs("models", exist_ok=True)
 torch.save(model.state_dict(), "models/fight_model.pth")
 
-print("Training complete. Model saved.")
+print("\nTraining complete. Model saved to models/fight_model.pth")

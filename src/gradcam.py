@@ -1,9 +1,6 @@
 import torch
 import cv2
 import numpy as np
-import matplotlib.pyplot as plt
-from torchvision import transforms
-from model import FightDetector
 
 
 class GradCAM:
